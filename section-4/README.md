@@ -17,3 +17,12 @@
 7. 누구도 굶지 않고 모든 철학자가 스파게티를 먹을 수 있는 방법은 무엇이 있을까?
 
 ![출처-나무위키](https://w.namu.la/s/24ad59b9924a16433407eae0c36a52de73c04a5a0f9014414a473ce5b0390efdb545e8e89270c6d36426654001d1672c78b34590281f978235da7df6ea03e0b35bd6d1a21e905b3f5d7f2a55009c09960f98e99d41bd70a67135d47c184ed23251ac037ac3d55c52721b9159d88f4f75)
+
+## Testing
+
+```
+$ go test -v .
+--- PASS: Test_main (29.93s)
+PASS
+ok      dining  30.692s
+```
