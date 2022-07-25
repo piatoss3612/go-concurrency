@@ -57,7 +57,6 @@ func (shop *BarberShop) curHair(barber, client string) {
 
 func (shop *BarberShop) sendBarberHome(barber string) {
 	color.Cyan("%s is done for today, going back home", barber)
-	shop.NumberOfBarbers--
 	shop.BarbersDoneChan <- true
 }
 
@@ -75,4 +74,20 @@ func (shop *BarberShop) closeShopForDay() {
 
 	color.Green("----------------------------------------------------------------")
 	color.Green("The barbershop is now closed for the day, and everyone back home")
+}
+
+func (shop *BarberShop) addClient(client string) {
+	// print out a message
+	color.Green("*** %s arrives!", client)
+
+	if shop.Open {
+		select {
+		case shop.ClientsChan <- client:
+			color.Yellow("%s takes a seat in the waiting room", client)
+		default:
+			color.Red("The waiting room is full, so %s leaves...", client)
+		}
+	} else {
+		color.Red("The shop is already closed, so %s leaves...", client)
+	}
 }

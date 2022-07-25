@@ -12,3 +12,7 @@
 1. 이발사는 웨이팅룸에 고정된 개수의 좌석이 있는 바버샵으로 출근을 합니다
 2. 만약 웨이팅룸에 대기하는 사람이 아무도 없다면, 이발사는 낮잠을 잡니다
 3. 손님이 바버샵에 들어왔을 때, 웨이팅룸에 좌석이 남아있지 않다면 손님을 그대로 떠나갑니다
+
+## The Sleeping Barber - Output
+
+![sleeping-barber-result](sleeping-barber/sleeping-barber-result.png)
