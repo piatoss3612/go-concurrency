@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -47,6 +48,21 @@ func main() {
 	// set up mail
 
 	// listen for web connections
+	app.serve()
+}
+
+func (app *Config) serve() {
+	// start http server
+	srv := http.Server{
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: app.routes(),
+	}
+
+	app.InfoLog.Printf("Starting web server on port %s...\n", webPort)
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Panic(err)
+	}
 }
 
 func initDB() *sql.DB {
