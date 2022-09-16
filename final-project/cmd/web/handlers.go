@@ -151,12 +151,6 @@ func (app *Config) ActivateAccount(w http.ResponseWriter, r *http.Request) {
 
 	app.Session.Put(r.Context(), "flash", "Account activated. You can now log in.")
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-
-	// generate invoice
-
-	// send an email with attachments
-
-	// subscribe the user to an account
 }
 
 func (app *Config) ChooseSubscription(w http.ResponseWriter, r *http.Request) {
@@ -176,6 +170,26 @@ func (app *Config) ChooseSubscription(w http.ResponseWriter, r *http.Request) {
 	dataMap["plans"] = plans
 
 	app.render(w, r, "plans.page.gohtml", &TemplateData{
-		DataMap: dataMap,
+		Data: dataMap,
 	})
+}
+
+func (app *Config) SubscribeToPlan(w http.ResponseWriter, r *http.Request) {
+	// get the id of the plan that is chosen
+
+	// get the plan from the database
+
+	// get the user from the session
+
+	// generate invoice
+
+	// send an email with the invoice attached
+
+	// generate a menual
+
+	// send an email with the manual attached
+
+	// subscribe the user to an account
+
+	// redirect
 }
