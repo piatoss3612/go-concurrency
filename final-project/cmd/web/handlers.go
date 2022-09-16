@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"final-project/data"
 	"fmt"
 	"html/template"
@@ -178,7 +177,12 @@ func (app *Config) SubscribeToPlan(w http.ResponseWriter, r *http.Request) {
 	// get the id of the plan that is chosen
 	id := r.URL.Query().Get("id")
 
-	planID, _ := strconv.Atoi(id)
+	planID, err := strconv.Atoi(id)
+	if err != nil {
+		app.ErrorLog.Println("Error getting plan id:", err)
+		http.Redirect(w, r, "/members/plans", http.StatusSeeOther)
+		return
+	}
 
 	// get the plan from the database
 	plan, err := app.Models.Plan.GetOne(planID)
@@ -240,14 +244,28 @@ func (app *Config) SubscribeToPlan(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// send an email with the manual attached
-
 		app.sendEmail(msg)
 
 		// test app error chan
-		app.ErrorChan <- errors.New("some custom error")
+		// app.ErrorChan <- errors.New("some custom error")
 	}()
 
 	// subscribe the user to an account
+	err = app.Models.Plan.SubscribeUserToPlan(user, *plan)
+	if err != nil {
+		app.Session.Put(r.Context(), "error", "Error subscribing to plan!")
+		http.Redirect(w, r, "/members/plans", http.StatusSeeOther)
+		return
+	}
+
+	u, err := app.Models.User.GetOne(user.ID)
+	if err != nil {
+		app.Session.Put(r.Context(), "error", "Error getting user from database!")
+		http.Redirect(w, r, "/members/plans", http.StatusSeeOther)
+		return
+	}
+
+	app.Session.Put(r.Context(), "user", u)
 
 	// redirect
 	app.Session.Put(r.Context(), "flash", "Subscribed!")
@@ -277,7 +295,7 @@ func (app *Config) generateManual(u data.User, plan *data.Plan) *gofpdf.Fpdf {
 	pdf.SetFont("Arial", "", 12)
 	pdf.MultiCell(0, 4, fmt.Sprintf("%s %s", u.FirstName, u.LastName), "", "C", false)
 	pdf.Ln(5)
-	pdf.MultiCell(0, 4, fmt.Sprintf("%s User Guide", u.Email), "", "C", false)
+	pdf.MultiCell(0, 4, fmt.Sprintf("%s User Guide", plan.PlanName), "", "C", false)
 
 	return pdf
 }

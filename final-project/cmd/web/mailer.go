@@ -76,9 +76,8 @@ func (m *Mail) sendMail(msg Message, errorChan chan error) {
 	// 	"message": msg.Data,
 	// }
 
-	if len(msg.DataMap) > 0 {
+	if len(msg.DataMap) == 0 {
 		msg.DataMap = make(map[string]any)
-
 	}
 
 	msg.DataMap["message"] = msg.Data
@@ -112,6 +111,7 @@ func (m *Mail) sendMail(msg Message, errorChan chan error) {
 
 	email := mail.NewMSG()
 	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject)
+
 	email.SetBody(mail.TextPlain, plainMessage)
 	email.AddAlternative(mail.TextHTML, formattedMessage)
 
@@ -122,8 +122,8 @@ func (m *Mail) sendMail(msg Message, errorChan chan error) {
 	}
 
 	if len(msg.AttachmentMap) > 0 {
-		for k, v := range msg.AttachmentMap {
-			email.AddAttachment(v, k)
+		for key, value := range msg.AttachmentMap {
+			email.AddAttachment(value, key)
 		}
 	}
 

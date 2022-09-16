@@ -188,7 +188,7 @@ func (app *Config) shutdown() {
 	app.InfoLog.Println("would run cleanup tasks...")
 
 	// block until waitgroup is empty
-	app.Wait.Wait()
+	app.releaseWaitGroup()
 
 	app.Mailer.DoneChan <- true
 	app.ErrorChanDone <- true
@@ -209,5 +209,22 @@ func (app *Config) listenForErrors() {
 		case <-app.ErrorChanDone:
 			return
 		}
+	}
+}
+
+func (app *Config) releaseWaitGroup() {
+	wgDone := make(chan bool)
+
+	go func() {
+		app.Wait.Wait()
+		wgDone <- true
+	}()
+
+	select {
+	case <-wgDone:
+		app.InfoLog.Println("wait group is released...")
+		return
+	case <-time.After(10 * time.Second):
+		app.ErrorLog.Println("subscribe-plan: waitgroup did not release; timing out.")
 	}
 }
